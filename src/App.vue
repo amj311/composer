@@ -45,7 +45,7 @@
       </template>
     </svg>
 
-    <div style="display: flex">
+    <div style="display: flex; justify-content: space-around; width: 300px">
       <div v-for="step in scale" @click="playTone(getFrequency(step.offset + keyOffset))"
         :style="{ opacity: step.isHalf ? .5 : '', width: '30px', textAlign: 'center' }">
         <div>{{ step.name }}</div>
