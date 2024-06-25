@@ -1,72 +1,78 @@
 <template>
   <div id="app">
 
-  <svg width=20 height=20 stroke="black">
-    <!-- lines -->
-    <line x1="0" y1="0" x2="20" y2="0"/>
-    <line x1="0" y1="10" x2="20" y2="10" />
-    <line x1="0" y1="20" x2="20" y2="20" />
+    <svg width=20 height=20 stroke="black">
+      <!-- lines -->
+      <line x1="0" y1="0" x2="20" y2="0" />
+      <line x1="0" y1="10" x2="20" y2="10" />
+      <line x1="0" y1="20" x2="20" y2="20" />
 
-    <!-- notes -->
-    <NoteBulb :note="note" x="3" y="4" @click="doAlert"/>
-  </svg>
+      <!-- notes -->
+      <NoteHead :note="note" x="3" y="4" @click="doAlert" />
+    </svg>
 
-&nbsp;&nbsp;
+    &nbsp;&nbsp;
     <select v-model="note.type">
       <option :value="1">Whole</option>
-      <option :value="1/2">half</option>
-      <option :value="1/4">quarter</option>
-      <option :value="1/8">eighth</option>
-      <option :value="1/16">sixteenth</option>
+      <option :value="1 / 2">half</option>
+      <option :value="1 / 4">quarter</option>
+      <option :value="1 / 8">eighth</option>
+      <option :value="1 / 16">sixteenth</option>
     </select>
-    
-    
-   
+
+
+
     <br /><br />
-    
-  
+
+
     <select v-model="keyOffset">
-      <option v-for="note in 12" :value="note - 1">{{getNote(note - 1).name}}</option>
+      <option v-for="note in 12" :value="note - 1">{{ getNote(note - 1).name }}</option>
     </select>
-    <table>
-      <tr v-for="step in scale" @click="playTone(getFrequency(step.offset + keyOffset))" :style="{ opacity: step.isHalf ? .5 : ''}">
-        <td>{{step.name}}</td>
-        <td>{{getNote(step.offset + keyOffset).name}}</td>
-      </tr>
-    </table>
+
+    <br /><br />
+
+    <svg width=250 height=80 stroke="black">
+      <!-- lines -->
+      <line x1="0" y1="0" x2="250" y2="0" />
+      <line x1="0" y1="10" x2="250" y2="10" />
+      <line x1="0" y1="20" x2="250" y2="20" />
+      <line x1="0" y1="30" x2="250" y2="30" />
+
+      <!-- notes -->
+      <template v-for="step, i in scale.filter(s => !s.isHalf)">
+        <NoteHead :note="{ type: 1, note: getNote(step.offset + keyOffset) }" :x="i * 30"
+          :y="34 + (-5 * getNote(step.offset + keyOffset).staffPos)" @click="doAlert" />
+      </template>
+    </svg>
+
+    <div style="display: flex">
+      <div v-for="step in scale.filter(s => !s.isHalf)" @click="playTone(getFrequency(step.offset + keyOffset))"
+        :style="{ opacity: step.isHalf ? .5 : '', width: '30px', textAlign: 'center' }">
+        <div>{{ step.name }}</div>
+        <div>{{ getNote(step.offset + keyOffset).name }}</div>
+    </div>
+    </div>
+
+
   </div>
-
-  <br />
-
-  <svg width=200 height=80 stroke="black">
-    <!-- lines -->
-    <line x1="0" y1="0" x2="200" y2="0"/>
-    <line x1="0" y1="10" x2="200" y2="10" />
-    <line x1="0" y1="20" x2="200" y2="20" />
-    <line x1="0" y1="30" x2="200" y2="30" />
-
-    <!-- notes -->
-    <NoteBulb v-for="step, i in scale.filter(s => !s.isHalf)" :note="{ type: 1 }" :x="i * 20" :y="34 + (-5 * getNote(step.offset + keyOffset).staffPos)" @click="doAlert"/>
-  </svg>
-
-
 
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'; 
-import NoteBulb from './components/NoteBulb.vue';
+import { ref, reactive } from 'vue';
+import NoteHead from './components/NoteHead.vue';
 
 const doAlert = () => {
   alert('hi')
 }
-  const note = reactive({
-    type: 1,
-    stemDirection: 'up',
-    stemLength: undefined,
-    // dotted: false,
-  });
-  
+
+const note = reactive({
+  type: 1,
+  stemDirection: 'up',
+  stemLength: undefined,
+  // dotted: false,
+});
+
 const keyOffset = ref(0);
 const middleCHz = 261.63;
 const getFrequency = noteNumber => middleCHz * Math.pow(2, noteNumber / 12);
@@ -137,16 +143,18 @@ const notes = [
     staffPos: 0,
   },
   {
-    isHalf: true,
     name: 'C#',
+    isHalf: true,
+    staffPos: 0,
   },
   {
     name: 'D',
     staffPos: 1,
   },
   {
-    isHalf: true,
     name: 'D#',
+    isHalf: true,
+    staffPos: 1,
   },
   {
     name: 'E',
@@ -157,36 +165,39 @@ const notes = [
     staffPos: 3,
   },
   {
-    isHalf: true,
     name: 'F#',
+    isHalf: true,
+    staffPos: 3,
   },
   {
     name: 'G',
     staffPos: 4,
   },
   {
-    isHalf: true,
     name: 'G#',
+    isHalf: true,
+    staffPos: 4,
   },
   {
     name: 'A',
     staffPos: 5,
   },
   {
-    isHalf: true,
     name: 'A#',
+    isHalf: true,
+    staffPos: 5,
   },
   {
     name: 'B',
-    staffPos: 7,
+    staffPos: 6,
   },
 ]
 
 // resolves any +/- integer to a note relative middle C at 0
 const getNote = noteNumber => notes[(12 + (noteNumber % 12)) % 12];
-  
+
 // create web audio api context
-var audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playTone(frequency, duration) {
   // create Oscillator node
@@ -194,15 +205,15 @@ function playTone(frequency, duration) {
 
   oscillator.frequency.value = frequency; // value in hertz
   oscillator.connect(audioCtx.destination);
-  oscillator.start();    
+  oscillator.start();
 
   setTimeout(
-  function() {
-    oscillator.stop();
-  }, duration);
+    function () {
+      oscillator.stop();
+    }, duration);
 }
-  
-  
+
+
 </script>
 
 <!-- Use preprocessors via the lang attribute! e.g. <style lang="scss"> -->
