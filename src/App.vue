@@ -31,21 +31,22 @@
 
     <br /><br />
 
-    <svg width=300 height=80 stroke="black">
+    <svg width=400 height=60 stroke="black">
       <!-- lines -->
-      <line x1="0" y1="0" x2="300" y2="0" />
-      <line x1="0" y1="10" x2="300" y2="10" />
-      <line x1="0" y1="20" x2="300" y2="20" />
-      <line x1="0" y1="30" x2="300" y2="30" />
+      <line x1="0" y1="0" x2="400" y2="0" />
+      <line x1="0" y1="10" x2="400" y2="10" />
+      <line x1="0" y1="20" x2="400" y2="20" />
+      <line x1="0" y1="30" x2="400" y2="30" />
+      <line x1="0" y1="40" x2="400" y2="40" />
 
       <!-- notes -->
       <template v-for="step, i in scale">
         <NoteHead :note="{ type: 1, note: getNote(step.offset + keyOffset) }" :x="i * 30"
-          :y="34 + (-5 * getNote(step.offset + keyOffset).staffPos)" @click="doAlert" />
+          :y="44 + (-5 * tonePos(step.offset + keyOffset))" @click="doAlert" />
       </template>
     </svg>
 
-    <div style="display: flex; justify-content: space-around; width: 300px">
+    <div style="display: flex; justify-content: space-around; width: 390px">
       <div v-for="step in scale" @click="playTone(getFrequency(step.offset + keyOffset))"
         :style="{ opacity: step.isHalf ? .5 : '', width: '30px', textAlign: 'center' }">
         <div>{{ step.name }}</div>
@@ -75,7 +76,7 @@ const note = reactive({
 
 const keyOffset = ref(0);
 const middleCHz = 261.63;
-const getFrequency = noteNumber => middleCHz * Math.pow(2, noteNumber / 12);
+const getFrequency = toneNumber => middleCHz * Math.pow(2, toneNumber / 12);
 
 const scale = [
   {
@@ -194,7 +195,15 @@ const notes = [
 ]
 
 // resolves any +/- integer to a note relative middle C at 0
-const getNote = noteNumber => notes[(12 + (noteNumber % 12)) % 12];
+const getNote = toneNumber => notes[(12 + (toneNumber % 12)) % 12];
+
+// determines the staff position relative to middle C of a tone based on its corresponding note
+function tonePos(toneNumber) {
+  const note = getNote(toneNumber);
+  // tone 12 (high c) should be position 7
+  // for every octave above 11, add 7 to note position?
+  return note.staffPos + (Math.floor(toneNumber / 12) * 7);
+}
 
 // create web audio api context
 var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
