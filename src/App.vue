@@ -31,22 +31,22 @@
 
     <br /><br />
 
-    <svg width=250 height=80 stroke="black">
+    <svg width=300 height=80 stroke="black">
       <!-- lines -->
-      <line x1="0" y1="0" x2="250" y2="0" />
-      <line x1="0" y1="10" x2="250" y2="10" />
-      <line x1="0" y1="20" x2="250" y2="20" />
-      <line x1="0" y1="30" x2="250" y2="30" />
+      <line x1="0" y1="0" x2="300" y2="0" />
+      <line x1="0" y1="10" x2="300" y2="10" />
+      <line x1="0" y1="20" x2="300" y2="20" />
+      <line x1="0" y1="30" x2="300" y2="30" />
 
       <!-- notes -->
-      <template v-for="step, i in scale.filter(s => !s.isHalf)">
+      <template v-for="step, i in scale">
         <NoteHead :note="{ type: 1, note: getNote(step.offset + keyOffset) }" :x="i * 30"
           :y="34 + (-5 * getNote(step.offset + keyOffset).staffPos)" @click="doAlert" />
       </template>
     </svg>
 
     <div style="display: flex">
-      <div v-for="step in scale.filter(s => !s.isHalf)" @click="playTone(getFrequency(step.offset + keyOffset))"
+      <div v-for="step in scale" @click="playTone(getFrequency(step.offset + keyOffset))"
         :style="{ opacity: step.isHalf ? .5 : '', width: '30px', textAlign: 'center' }">
         <div>{{ step.name }}</div>
         <div>{{ getNote(step.offset + keyOffset).name }}</div>
