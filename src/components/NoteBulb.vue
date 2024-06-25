@@ -12,7 +12,7 @@ const count = ref(0)
 
 <template>
   <!--  single note no stem -->
-  <svg :x="x" :y="y" width=14 height=12 stroke="black">
+  <svg :x="x" :y="y" width=14 height=12 stroke="black" v-bind="$attrs">
     <g style="transform-origin: center;" :style="{ transform: note.type < 1 ? 'rotate(-30deg) scale(0.9)' : ''}">
       <path stroke="black" stroke-width="0"
         d="M 6.5,0 a 7,6 0 1,0 1,0 z     M 6.5,3 a 6,3 0 1,0 1,0 z" :fill-rule="note.type < 1/2 ? null : 'evenodd'" fill="black" />

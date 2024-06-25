@@ -8,7 +8,7 @@
     <line x1="0" y1="20" x2="20" y2="20" />
 
     <!-- notes -->
-    <NoteBulb :note="note" x="3" y="4" />
+    <NoteBulb :note="note" x="3" y="4" @click="doAlert"/>
   </svg>
 
 &nbsp;&nbsp;
@@ -36,6 +36,20 @@
     </table>
   </div>
 
+  <br />
+
+  <svg width=200 height=80 stroke="black">
+    <!-- lines -->
+    <line x1="0" y1="0" x2="200" y2="0"/>
+    <line x1="0" y1="10" x2="200" y2="10" />
+    <line x1="0" y1="20" x2="200" y2="20" />
+    <line x1="0" y1="30" x2="200" y2="30" />
+
+    <!-- notes -->
+    <NoteBulb v-for="step, i in scale.filter(s => !s.isHalf)" :note="{ type: 1 }" :x="i * 20" :y="34 + (-5 * getNote(step.offset + keyOffset).staffPos)" @click="doAlert"/>
+  </svg>
+
+
 
 </template>
 
@@ -43,8 +57,13 @@
 import { ref, reactive } from 'vue'; 
 import NoteBulb from './components/NoteBulb.vue';
 
+const doAlert = () => {
+  alert('hi')
+}
   const note = reactive({
     type: 1,
+    stemDirection: 'up',
+    stemLength: undefined,
     // dotted: false,
   });
   
@@ -115,6 +134,7 @@ const scale = [
 const notes = [
   {
     name: 'C',
+    staffPos: 0,
   },
   {
     isHalf: true,
@@ -122,6 +142,7 @@ const notes = [
   },
   {
     name: 'D',
+    staffPos: 1,
   },
   {
     isHalf: true,
@@ -129,9 +150,11 @@ const notes = [
   },
   {
     name: 'E',
+    staffPos: 2,
   },
   {
     name: 'F',
+    staffPos: 3,
   },
   {
     isHalf: true,
@@ -139,6 +162,7 @@ const notes = [
   },
   {
     name: 'G',
+    staffPos: 4,
   },
   {
     isHalf: true,
@@ -146,6 +170,7 @@ const notes = [
   },
   {
     name: 'A',
+    staffPos: 5,
   },
   {
     isHalf: true,
@@ -153,6 +178,7 @@ const notes = [
   },
   {
     name: 'B',
+    staffPos: 7,
   },
 ]
 
@@ -166,26 +192,14 @@ function playTone(frequency, duration) {
   // create Oscillator node
   var oscillator = audioCtx.createOscillator();
 
-  try {
   oscillator.frequency.value = frequency; // value in hertz
   oscillator.connect(audioCtx.destination);
-  oscillator.start();
-  
-    alert(frequency);  
-    
-  }
-  catch (e) {
-    console.log(e)
-    alert(e)
-    }
-  
-  return new Promise((res) => {
-    setTimeout(
-    function() {
-      oscillator.stop();
-      res();
-    }, duration);
-  });
+  oscillator.start();    
+
+  setTimeout(
+  function() {
+    oscillator.stop();
+  }, duration);
 }
   
   
